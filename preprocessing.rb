@@ -1,7 +1,7 @@
 require 'tf_idf'
 
 SANITIZE_REGEXP = /('|\"|‘|’|\/|\\)/
-PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!|\(|\)|[0-9]*|\$|&|$)/
+PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!|\(|\)|[0-9]|\$|&|\[|\]|<|>)/
 
 PATH="/home/niltonvasques/ownCloud/Dropbox/Experimentos-NILTON/testes_AvaliacaoDescritoresHierarquico/BASES/NewYorkTimes/NewYorkTimes"
 STOPWORDS = File.read("stopwords.txt").encode("UTF-8", invalid: :replace,
@@ -33,7 +33,7 @@ matrix = TfIdf.new(docs)
 bag = docs.flatten.uniq.sort
 #puts bag.join(" ")
 
-puts "#{docs.size} #{bag.size}"
+puts " #{bag.size} #{docs.size}"
 puts bag
 
 matrix.tf_idf.each do |doc|

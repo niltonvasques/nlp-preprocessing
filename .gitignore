@@ -1,0 +1,5 @@
+*.swp
+*.matrix
+*.arff
+*.out
+*.cluster*

@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rwordnet (1.1.0)
+    stopwords (0.2)
+    tf_idf (0.0.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rwordnet
+  stopwords
+  tf_idf
+
+BUNDLED WITH
+   1.11.2
