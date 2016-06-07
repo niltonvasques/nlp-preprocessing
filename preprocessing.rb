@@ -1,24 +1,26 @@
 require 'tf_idf'
+require 'fast_stemmer'
 
-SANITIZE_REGEXP = /('|\"|‘|’|\/|\\)/
-PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!|\(|\)|[0-9]|\$|&|\[|\]|<|>)/
+SANITIZE_REGEXP = /('|\"|‘|’|\/|\\|~|#|%|=|@|_)/
+PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!|\(|\)|[0-9]|\$|&|\[|\]|<|>|\|)/
 
-PATH="/home/niltonvasques/ownCloud/Dropbox/Experimentos-NILTON/testes_AvaliacaoDescritoresHierarquico/BASES/NewYorkTimes/NewYorkTimes"
+PATH=ARGV[0]
 STOPWORDS = File.read("stopwords.txt").encode("UTF-8", invalid: :replace,
                                               undef: :replace, replace:
                                               '').downcase.gsub!(SANITIZE_REGEXP,
                                                                  '').split(" ")
 
 
-docs_path = Dir.glob("#{PATH}/*/*")
+docs_path = Dir.glob("#{PATH}/*")
 
 docs = []
 
 docs_path.each do |doc|
   text = File.read(doc).encode("UTF-8", invalid: :replace, undef: :replace, replace: '') 
   text = text.downcase.gsub(SANITIZE_REGEXP, '')
-  text = text.downcase.gsub(PUNTUCTUATION_REGEXP, '')
-  text = text.downcase.split(" ") - STOPWORDS 
+  text = text.gsub(PUNTUCTUATION_REGEXP, '')
+  text = text.split(" ") - STOPWORDS 
+  text = text.map{ |w| w.stem }
   docs << text
 
   #puts text.join(" ")

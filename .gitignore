@@ -3,3 +3,6 @@
 *.arff
 *.out
 *.cluster*
+*.in
+datasets
+formated

@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    fast-stemmer (1.0.2)
+    ruby-stemmer (0.9.6)
     rwordnet (1.1.0)
     stopwords (0.2)
     tf_idf (0.0.2)
@@ -9,6 +11,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  fast-stemmer
+  ruby-stemmer
   rwordnet
   stopwords
   tf_idf
