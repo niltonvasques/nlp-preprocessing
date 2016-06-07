@@ -1,7 +1,7 @@
 ## NLP Preprocessing Tool 
 
 
-The main goal of this project is to provide a tool for preprocessing text data with canonical text mining techniques.
+A tool for preprocessing text data with canonical text mining techniques.
 
 #### Tasks
 
