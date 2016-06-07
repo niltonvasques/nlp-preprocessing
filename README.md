@@ -8,6 +8,7 @@ The main goal of this project is to provide a tool for preprocessing text data w
 * Sanitize texts
 * Remove punctuaction
 * Remove stopwords
+* Stemming
 * Format data into TF-IDF
 * Output result in contest problems format
 
