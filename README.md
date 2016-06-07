@@ -12,6 +12,15 @@ The main goal of this project is to provide a tool for preprocessing text data w
 * Output result in contest problems format
 
 
+#### Setup
+
+    bundle install
+
+#### Run
+
+    ruby preprocessing.rb $DATASET_PATH > dataset.tfidf
+
+
 #### Output format
 
 *N* is the number of terms 
