@@ -39,7 +39,7 @@ Shoes.app width: WIDTH, height: HEIGHT do
     #para "Enter the path of text files"
     stack margin: 10 do
       flow do
-        @folder = edit_line text: ".", width: "60%"
+        @folder = edit_line text: Dir.home, width: "60%"
         button "Select folder with docs", width: "40%" do
           answer ask_open_folder
         end
@@ -49,7 +49,7 @@ Shoes.app width: WIDTH, height: HEIGHT do
         @chk_data = check checked: true; para "data", margin_right: 30 
       end
       flow do
-        @out_folder = edit_line text: ".", width: "60%"
+        @out_folder = edit_line text: Dir.home, width: "60%"
         button "Select output folder", width: "40%" do
           ans_out ask_open_folder
         end
