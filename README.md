@@ -13,13 +13,34 @@ A tool for preprocessing text data with canonical text mining techniques.
 * Output result in contest problems format
 
 
-#### Setup
+#### Usage 
 
     bundle install
 
-#### Run
+```ruby
+  docs_path = Dir.glob(/tmp/dataset/*.txt")  
 
-    ruby preprocessing.rb $DATASET_PATH > dataset.tfidf
+  nlp = Preprocessing.new(docs_path, "/tmp", stemming: false)
+
+  nlp.clean do |progress, message|
+    puts "#{progress}% - #{message}"
+  end
+```
+
+#### GUI Mode
+
+##### From binaries for Linux 
+
+[preprocessing-x86-64.run](https://github.com/niltonvasques/nlp-preprocessing/releases/download/v0.1.0/nlp-preprocessing-x86_64.run)
+
+##### From binaries for Windows 
+[preprocessing.exe](https://github.com/niltonvasques/nlp-preprocessing/releases/download/v0.1.0/preprocessing.exe)
+
+##### From source
+
+Download and install [Shoes](http://shoesrb.com/downloads/) and run
+
+    shoes gui.rb
 
 
 #### Output format
