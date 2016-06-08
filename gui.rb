@@ -1,12 +1,7 @@
 require 'shoes'
 
 Shoes.setup do
-  gem 'stopwords'
-#  gem 'rwordnet'
   gem 'tf_idf'
-#  gem 'fast-stemmer'
-#  gem 'ruby-stemmer'
-  gem 'stemmer'
 end
 
 require './preprocessing'
@@ -76,9 +71,12 @@ Shoes.app width: WIDTH, height: HEIGHT do
         out_path = @out_folder.text
         out_path = out_path[1..out_path.size-2] if out_path =~ /"/
 
+	path = "#{path}".gsub(/\\/,'/')
+	out_path = "#{out_path}".gsub(/\\/,'/')
+
         docs_path = []
-        docs_path += Dir.glob("#{path}/*\.txt") if @chk_txt.checked?  
-        docs_path += Dir.glob("#{path}/*\.data") if @chk_data.checked? 
+        docs_path += Dir.glob(path+"/*.txt") if @chk_txt.checked?  
+        docs_path += Dir.glob(path+"/*.data") if @chk_data.checked? 
         options = {}
         options[:stemming] = @chk_stem.checked?
         options[:punctuation] = @chk_stem.checked?
