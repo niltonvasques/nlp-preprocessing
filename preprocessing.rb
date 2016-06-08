@@ -1,8 +1,8 @@
 require 'tf_idf'
 require 'fast_stemmer'
 
-SANITIZE_REGEXP = /('|\"|‘|’|\/|\\|~|#|%|=|@|_)/
-PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!|\(|\)|[0-9]|\$|&|\[|\]|<|>|\|)/
+SANITIZE_REGEXP = /('|\"|‘|’|\/|\\|~|#|%|=|@|_|\(|\)|[0-9]|\$|&|\[|\]|<|>|\|)/
+PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!)/
 
 PATH=ARGV[0]
 STOPWORDS = File.read("stopwords.txt").encode("UTF-8", invalid: :replace,
@@ -11,10 +11,12 @@ STOPWORDS = File.read("stopwords.txt").encode("UTF-8", invalid: :replace,
                                                                  '').split(" ")
 class Preprocessing 
 
-  def initialize(docs_path, out_path)
+  def initialize(docs_path, out_path, options = {} )
+    @default = {stemming: true, punctuation: true, stopwords: true, sanitize: true}
+    @default.merge!(options)
     @out_path = out_path
     @docs_path = docs_path
-    puts "Preprocessing initialize #{path} #{@docs_path.size}"
+    puts "Preprocessing initialize #{@docs_path.size}"
   end
 
   def clean
@@ -28,10 +30,12 @@ class Preprocessing
     @docs_path.each do |doc|
       yield progress, "preprocessing #{doc}"
       text = File.read(doc).encode("UTF-8", invalid: :replace, undef: :replace, replace: '') 
-      text = text.downcase.gsub(SANITIZE_REGEXP, '')
-      text = text.gsub(PUNTUCTUATION_REGEXP, '')
-      text = text.split(" ") - STOPWORDS 
-      text = text.map{ |w| w.stem }
+      text = text.downcase
+      text = text.gsub(SANITIZE_REGEXP, '') if @default[:sanitize]
+      text = text.gsub(PUNTUCTUATION_REGEXP, '') if @default[:punctuation]
+      text = text.split(" ")
+      text = text - STOPWORDS  if @default[:stopwords]
+      text = text.map{ |w| w.stem } if @default[:stemming]
       docs << text
 
       #puts text.join(" ")
@@ -48,15 +52,15 @@ class Preprocessing
     bag = docs.flatten.uniq.sort
     #puts bag.join(" ")
 
-    puts "Output file created in #{@out_path}/dataset.out"
+    puts "Output file created in #{@out_path}/dataset.tf_idf"
 
     progress = 0
     yield progress, "generating tf idf"
     tf_idf = matrix.tf_idf
     progress += 95
 
-    yield progress, "saving results in #{@out_path}/dataset.out"
-    File.open("#{@out_path}/dataset.out", "w") do |f|
+    yield progress, "saving results in #{@out_path}/dataset.tf_idf"
+    File.open("#{@out_path}/dataset.tf_idf", "w") do |f|
       f.write "#{bag.size} #{docs.size}\n"
       f.write bag.join("\n")
 

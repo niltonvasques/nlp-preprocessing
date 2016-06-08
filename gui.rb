@@ -49,8 +49,8 @@ Shoes.app width: WIDTH, height: HEIGHT do
         end
       end
       flow do
-        check; para "txt", margin_right: 30
-        check; para "data", margin_right: 30 
+        @chk_txt  = check checked: true; para "txt", margin_right: 30
+        @chk_data = check checked: true; para "data", margin_right: 30 
       end
       flow do
         @out_folder = edit_line text: ".", width: "60%"
@@ -59,10 +59,10 @@ Shoes.app width: WIDTH, height: HEIGHT do
         end
       end
       flow do
-        check; para "remove punctuation", margin_right: 30
-        check; para "stemming", margin_right: 30 
-        check; para "remove stopwords", margin_right: 30 
-        check; para "tf_idf", margin_right: 30 
+        @chk_pun    = check checked: true; para "remove punctuation", margin_right: 30
+        @chk_stem   = check checked: true; para "stemming", margin_right: 30 
+        @chk_stop   = check checked: true; para "remove stopwords", margin_right: 30 
+        @chk_tf_idf = check checked: true; para "tf_idf", margin_right: 30 
       end
     end
     m_left = (WIDTH-2*MARGIN) / 2
@@ -74,8 +74,17 @@ Shoes.app width: WIDTH, height: HEIGHT do
         path = path[1..path.size-2] if path =~ /"/
         out_path = @out_folder.text
         out_path = out_path[1..out_path.size-2] if out_path =~ /"/
-        docs_path = Dir.glob(path+"/*")
-        nlp = Preprocessing.new(docs_path, out_path)
+
+        docs_path = []
+        docs_path += Dir.glob("#{path}/*\.txt") if @chk_txt.checked?  
+        docs_path += Dir.glob("#{path}/*\.data") if @chk_data.checked? 
+        options = {}
+        options[:stemming] = @chk_stem.checked?
+        options[:punctuation] = @chk_stem.checked?
+        options[:stopwords] = @chk_stem.checked?
+        options[:tf_idf] = @chk_stem.checked?
+
+        nlp = Preprocessing.new(docs_path, out_path, options)
 
         show_progress
 
