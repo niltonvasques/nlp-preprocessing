@@ -20,7 +20,7 @@ A tool for preprocessing text data with canonical text mining techniques.
 
 ```ruby
   require './preprocessing'
-  docs_path = Dir.glob(/tmp/dataset/*.txt")  
+  docs_path = Dir.glob("/tmp/dataset/*.txt")  
 
   nlp = Preprocessing.new(docs_path, "/tmp", stemming: false)
 
