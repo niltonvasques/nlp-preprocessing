@@ -6,3 +6,5 @@
 *.in
 datasets
 formated
+dataset*
+*.swo
