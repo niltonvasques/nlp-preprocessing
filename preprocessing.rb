@@ -11,8 +11,9 @@ STOPWORDS = File.read("stopwords.txt").encode("UTF-8", invalid: :replace,
                                                                  '').split(" ")
 class Preprocessing 
 
-  def initialize(path)
-    @docs_path = Dir.glob(path+"/*")
+  def initialize(docs_path, out_path)
+    @out_path = out_path
+    @docs_path = docs_path
     puts "Preprocessing initialize #{path} #{@docs_path.size}"
   end
 
@@ -20,7 +21,12 @@ class Preprocessing
     puts "clean called #{@docs_path.size}"
     docs = []
 
+    progress = 0
+    yield progress, "#{@docs_path.size} texts found"
+    step = 100.0/@docs_path.size
+
     @docs_path.each do |doc|
+      yield progress, "preprocessing #{doc}"
       text = File.read(doc).encode("UTF-8", invalid: :replace, undef: :replace, replace: '') 
       text = text.downcase.gsub(SANITIZE_REGEXP, '')
       text = text.gsub(PUNTUCTUATION_REGEXP, '')
@@ -30,7 +36,10 @@ class Preprocessing
 
       #puts text.join(" ")
       #puts doc
+      progress += step
     end
+    progress += step
+    yield progress, "preprocessing finished"
 
     matrix = TfIdf.new(docs)
 
@@ -39,11 +48,19 @@ class Preprocessing
     bag = docs.flatten.uniq.sort
     #puts bag.join(" ")
 
-    File.open("dataset.out", "w") do |f|
+    puts "Output file created in #{@out_path}/dataset.out"
+
+    progress = 0
+    yield progress, "generating tf idf"
+    tf_idf = matrix.tf_idf
+    progress += 95
+
+    yield progress, "saving results in #{@out_path}/dataset.out"
+    File.open("#{@out_path}/dataset.out", "w") do |f|
       f.write "#{bag.size} #{docs.size}\n"
       f.write bag.join("\n")
 
-      matrix.tf_idf.each do |doc|
+      tf_idf.each do |doc|
         first = true
         bag.each do |word|
           f.write " " unless first
@@ -57,6 +74,7 @@ class Preprocessing
         f.write "\n"
       end
     end
+    progress = 100
+    yield progress, "finished!!"
   end
 end
-
