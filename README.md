@@ -1,7 +1,8 @@
-## NLP Preprocessing Tool 
-
+## NLP Preprocessing Tool
 
 A tool for preprocessing text data with canonical text mining techniques.
+
+![Preprocessing Tool](https://github.com/niltonvasques/nlp-preprocessing/blob/master/assets/app.png)
 
 #### Tasks
 
