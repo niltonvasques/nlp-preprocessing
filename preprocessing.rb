@@ -3,7 +3,7 @@ require './porter'
 #require 'fast_stemmer'
 #require 'lingua/stemmer'
 
-SANITIZE_REGEXP = /('|\"|‘|’|\/|\\|~|#|%|=|@|_|\(|\)|[0-9]|\$|&|\[|\]|<|>|\||\*|[--]*|\+|\^|{|})/
+SANITIZE_REGEXP = /(\-\-|\*|\+|\^|{|}|`|'|\"|‘|’|\/|\\|~|#|%|=|@|_|\(|\)|[0-9]|\$|&|\[|\]|<|>|\|)/
 PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!)/
 
 PATH=ARGV[0]
@@ -35,7 +35,7 @@ class Preprocessing
       text = text.downcase
       text = text.gsub(SANITIZE_REGEXP, '') if @default[:sanitize]
       text = text.gsub(PUNTUCTUATION_REGEXP, '') if @default[:punctuation]
-      text = text.split(" ")
+      text = text.split(" ").map{ |w| w.strip.gsub(/^-|-$/, '') }.select{ |w| w =~ /\w\w/ }
       text = text - STOPWORDS  if @default[:stopwords]
       text = text.map{ |w| w.stem } if @default[:stemming]
       #text = text.map{ |w| Lingua.stemmer(w) } if @default[:stemming]
@@ -85,8 +85,3 @@ class Preprocessing
     yield progress, "finished!!"
   end
 end
-p = Preprocessing.new(Dir.glob("../datasets/changelogs/*"),".")
-p.clean do |p,m|
-  puts "#{p} #{m}"
-end
-
