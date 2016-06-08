@@ -2,10 +2,11 @@ require 'shoes'
 
 Shoes.setup do
   gem 'stopwords'
-  gem 'rwordnet'
+#  gem 'rwordnet'
   gem 'tf_idf'
-  gem 'fast-stemmer'
-  gem 'ruby-stemmer'
+#  gem 'fast-stemmer'
+#  gem 'ruby-stemmer'
+  gem 'stemmer'
 end
 
 require './preprocessing'

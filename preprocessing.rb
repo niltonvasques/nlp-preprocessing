@@ -1,7 +1,9 @@
 require 'tf_idf'
-require 'fast_stemmer'
+#require 'fast_stemmer'
+#require 'lingua/stemmer'
+require 'stemmer'
 
-SANITIZE_REGEXP = /('|\"|‘|’|\/|\\|~|#|%|=|@|_|\(|\)|[0-9]|\$|&|\[|\]|<|>|\|)/
+SANITIZE_REGEXP = /(\+|\^|{|}|`|'|\"|‘|’|\/|\\|~|#|%|=|@|_|\(|\)|[0-9]|\$|&|\[|\]|<|>|\||\*)/
 PUNTUCTUATION_REGEXP = /(\.|,|:|;|\?|!)/
 
 PATH=ARGV[0]
@@ -19,9 +21,14 @@ class Preprocessing
     puts "Preprocessing initialize #{@docs_path.size}"
   end
 
-  def clean
+  def clean(&code_block)
     puts "clean called #{@docs_path.size}"
-    docs = []
+    preprocessing{ |p,m| yield p, m }
+    export{ |p,m| yield p, m }
+  end
+
+  def preprocessing
+    @docs = []
 
     progress = 0
     yield progress, "#{@docs_path.size} texts found"
@@ -35,33 +42,35 @@ class Preprocessing
       text = text.gsub(PUNTUCTUATION_REGEXP, '') if @default[:punctuation]
       text = text.split(" ")
       text = text - STOPWORDS  if @default[:stopwords]
-      text = text.map{ |w| w.stem } if @default[:stemming]
-      docs << text
+      text = text.map{ |w| Stemmer.stem_word(w) } if @default[:stemming]
+      #text = text.map{ |w| Lingua.stemmer(w) } if @default[:stemming]
+      @docs << text
 
       #puts text.join(" ")
       #puts doc
       progress += step
     end
-    progress += step
-    yield progress, "preprocessing finished"
+  end
 
-    matrix = TfIdf.new(docs)
+  def export(&code_block) 
+
+    matrix = TfIdf.new(@docs)
 
     #puts matrix.tf_idf
 
-    bag = docs.flatten.uniq.sort
+    bag = @docs.flatten.uniq.sort
     #puts bag.join(" ")
 
     puts "Output file created in #{@out_path}/dataset.tf_idf"
 
     progress = 0
-    yield progress, "generating tf idf"
+    code_block.call progress, "generating tf idf"
     tf_idf = matrix.tf_idf
     progress += 95
 
-    yield progress, "saving results in #{@out_path}/dataset.tf_idf"
+    code_block.call progress, "saving results in #{@out_path}/dataset.tf_idf"
     File.open("#{@out_path}/dataset.tf_idf", "w") do |f|
-      f.write "#{bag.size} #{docs.size}\n"
+      f.write "#{bag.size} #{@docs.size}\n"
       f.write bag.join("\n")
 
       tf_idf.each do |doc|
@@ -79,6 +88,11 @@ class Preprocessing
       end
     end
     progress = 100
-    yield progress, "finished!!"
+    code_block.call progress, "finished!!"
   end
 end
+
+#p = Preprocessing.new(Dir.glob("../datasets/changelogs/*"),".")
+#p.clean do |p,m|
+#  puts "#{p} #{m}"
+#end
